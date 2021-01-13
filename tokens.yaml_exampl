@@ -1,0 +1,3 @@
+BASE_URL: https://indico.cern.ch
+API_KEY : your-api-key
+SECRET_KEY: your-secret-key
