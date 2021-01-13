@@ -5,6 +5,7 @@ class Contribution():
     def __init__(self, data):
         self.startDate = data['startDate']
         self.endDate = data['endDate']
+        self.id = data['db_id']
         self.speakers = [] 
         for speak in data['speakers']:
             self.speakers.append({

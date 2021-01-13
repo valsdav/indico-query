@@ -7,9 +7,9 @@ if __name__ == '__main__':
     
     sess = indico.IndicoSession(cfg['BASE_URL'], cfg['API_KEY'], cfg['SECRET_KEY'])
     
-    #obj = sess.get_events_in_category('5783', 'yesterday')
-    ev = sess.get_event_details('990632')
+    obj = sess.get_events_in_category('5783',f='yesterday',limit='1')
+    #ev = sess.get_event_details('990632')
     
-    pprint(ev.zoomUrl)
+    pprint(obj)
 
     

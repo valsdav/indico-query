@@ -5,6 +5,7 @@ import requests as req
 from .Event  import Event
 from .Category import Category
 
+
 try:
     from urllib.parse import urlencode
 except ImportError:
@@ -38,21 +39,28 @@ class IndicoSession():
         self.secret_key = secret_key
 
 
-    def get_events_in_category(self, category, From="today", To="today"):
+    def get_events_in_category(self, category, f="today", t="today", fetch_contributions=False, limit=20, skip=0):
         path = '/export/categ/{}.json'.format(category)
         params = {
-            'from': From, 
-            'to': To
+            'from': f, 
+            'to': t,
         }
+        if fetch_contributions: 
+            params['detail'] =  'contributions'
+
         path = build_indico_request(path, params, self.api_key, self.secret_key)
-        data = req.get(self.base_url + path)
-        if data.status_code == 200:
-            return data.json()
+        r = req.get(self.base_url + path)
+        if r.status_code == 200:
+            data =  r.json()
+            events = [ ] 
+            for result in data['results']:
+                events.append(Event(result))
+            return events 
+        raise Exception("Category not found")
 
     def get_event_details(self, event):
         path = '/export/event/{}.json'.format(event)
         params = {
-            'occ':'yes',
             'detail': 'contributions',
         }
         path = build_indico_request(path, params, self.api_key, self.secret_key)

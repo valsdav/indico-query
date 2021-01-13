@@ -27,5 +27,5 @@ class Event():
         if match:
             self.zoomUrl = match.group()
         self.contributions = []
-        for contribution_data in data['contributions']:
+        for contribution_data in data.get('contributions',[]):
             self.contributions.append(Contribution(contribution_data))
