@@ -2,6 +2,8 @@ import hashlib
 import hmac
 import time
 import requests as req
+from .Event  import Event
+from .Category import Category
 
 try:
     from urllib.parse import urlencode
@@ -51,9 +53,11 @@ class IndicoSession():
         path = '/export/event/{}.json'.format(event)
         params = {
             'occ':'yes',
-            'detail': 'contributions'
+            'detail': 'contributions',
         }
         path = build_indico_request(path, params, self.api_key, self.secret_key)
-        data = req.get(self.base_url + path)
-        if data.status_code == 200:
-            return data.json()
+        r = req.get(self.base_url + path)
+        if r.status_code == 200:
+            data = r.json()
+            ev = Event(data['results'][0])
+            return ev
