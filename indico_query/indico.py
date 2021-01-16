@@ -4,6 +4,8 @@ import time
 import requests as req
 from .Event  import Event
 from .Category import Category
+import logging 
+log = logging.getLogger(__name__)
 
 
 try:
@@ -44,12 +46,16 @@ class IndicoSession():
         params = {
             'from': f, 
             'to': t,
+            'limit': limit,
+            'offset': skip
         }
         if fetch_contributions: 
             params['detail'] =  'contributions'
 
         path = build_indico_request(path, params, self.api_key, self.secret_key)
+        log.debug(path)
         r = req.get(self.base_url + path)
+        
         if r.status_code == 200:
             data =  r.json()
             events = [ ] 
@@ -64,8 +70,31 @@ class IndicoSession():
             'detail': 'contributions',
         }
         path = build_indico_request(path, params, self.api_key, self.secret_key)
+        log.debug("Getting event details: " , path)
         r = req.get(self.base_url + path)
         if r.status_code == 200:
             data = r.json()
             ev = Event(data['results'][0])
             return ev
+
+    def get_user_contributions(self, person_fullname, category, from_date, to_date='now'):
+        results = [] 
+        more_events = True
+        nreq = 0
+        nstep = 10
+        while(more_events):
+            try:
+                log.debug("requesting")
+                events = self.get_events_in_category(category, f=from_date, t=to_date, 
+                                                fetch_contributions=True, limit=nstep, skip=nreq*nstep )
+                if len(events)==0: more_events = False
+                for ev in events:
+                    for contr in ev.contributions:
+                        for speaker in contr.speakers:
+                            if speaker['full_name'] == person_fullname:
+                                results.append(contr)
+                nreq+=1
+            except Exception as e:
+                print("Error", e)
+                more_events = False
+        return results

@@ -1,8 +1,13 @@
 from pprint import pprint 
+import logging 
+log = logging.getLogger(__name__)
 
 class Contribution():
 
-    def __init__(self, data):
+    def __init__(self, event, data):
+        log.info("Loading contribution: {}".format( data['db_id']) ) 
+        self.event = event
+        self.title = data['title']
         self.startDate = data['startDate']
         self.endDate = data['endDate']
         self.id = data['db_id']
@@ -11,15 +16,17 @@ class Contribution():
             self.speakers.append({
                 'first_name': speak['first_name'],
                 'last_name': speak['last_name'],
+                'full_name': speak['fullName'],
                 'affiliation': speak['affiliation'],
                 'person_id': speak['person_id']
             })
+            log.debug("Speaker: {}".format(speak['fullName']))
         self.attachments = [ ] 
         for folder in data['folders']:
             for att in folder['attachments']:
                 if att['type'] == 'file':
                     self.attachments.append({
-                        'download_url': att['download_url'],
+                        'url': att['download_url'],
                         'filename': att['filename'],
                         'title': att['title'],
                         'content_type': att['content_type'],
@@ -27,7 +34,7 @@ class Contribution():
                     })
                 elif att['type'] == 'link':
                     self.attachments.append({
-                        'link_url': att['link_url'],
+                        'url': att['link_url'],
                         'title': att['title'],
                         'modified_dt': att['modified_dt']
                     })

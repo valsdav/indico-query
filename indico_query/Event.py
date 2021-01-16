@@ -1,11 +1,14 @@
 from pprint import pprint
 import re
 from .Contribution import Contribution
+import logging 
+log = logging.getLogger(__name__)
 
 class Event():
 
     def __init__(self, data):
-        pprint(data)
+        #pprint(data)
+        log.info("Loading event: {}".format(data['id']))
         self.category = data['category']
         self.categoryId = data['categoryId']
         self.startDate = data['startDate']
@@ -28,4 +31,4 @@ class Event():
             self.zoomUrl = match.group()
         self.contributions = []
         for contribution_data in data.get('contributions',[]):
-            self.contributions.append(Contribution(contribution_data))
+            self.contributions.append(Contribution(self, contribution_data))
