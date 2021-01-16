@@ -89,10 +89,8 @@ class IndicoSession():
                                                 fetch_contributions=True, limit=nstep, skip=nreq*nstep )
                 if len(events)==0: more_events = False
                 for ev in events:
-                    for contr in ev.contributions:
-                        for speaker in contr.speakers:
-                            if speaker['full_name'] == person_fullname:
-                                results.append(contr)
+                    if ev.filter_user(person_fullname):
+                        results.append(ev)
                 nreq+=1
             except Exception as e:
                 print("Error", e)

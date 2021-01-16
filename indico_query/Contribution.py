@@ -6,7 +6,7 @@ class Contribution():
 
     def __init__(self, event, data):
         log.info("Loading contribution: {}".format( data['db_id']) ) 
-        self.event = event
+        self.event_id = event.id
         self.title = data['title']
         self.startDate = data['startDate']
         self.endDate = data['endDate']
@@ -38,3 +38,11 @@ class Contribution():
                         'title': att['title'],
                         'modified_dt': att['modified_dt']
                     })
+    
+    def __repr__(self):
+        s = "\t>> [event:{}] {} >> {} {}".format(self.event_id, self.title, self.speakers[0]['full_name'], self.attachments[0]['url'])
+        return s
+
+    def __str__(self):
+        s = "\t>> [event:{}] {} >> {} {}".format(self.event_id, self.title, self.speakers[0]['full_name'], self.attachments[0]['url'])
+        return s
